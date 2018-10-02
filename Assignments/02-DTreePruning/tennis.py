@@ -33,7 +33,7 @@ tree.printTree(t,' ')
 
 tree.numpruned = 0
 print("PRUNE=============================")
-tree.prune(t,tennis,classes)
+print(t)
 #print('num pruned',tree.numpruned)
 
 tree.printTree(t,' ')

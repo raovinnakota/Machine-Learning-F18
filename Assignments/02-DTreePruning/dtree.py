@@ -24,9 +24,10 @@
 
 from numpy import *
 
+
 def keymax(d):
     '''
-    :param d: a dictionary 
+    :param d: a dictionary
     :return: dictionary key of maximum value in dictionary d
     '''
     vals=list(d.values())
@@ -115,7 +116,7 @@ class dtree:
 
     def leafValue(self,tree):
         '''
-        :return: value of leaf or majority class 
+        :return: value of leaf or majority class
         :param tree: tree must be a dictionary.
         '''
         return tree.get(self.VALUE,self.MAJORCLASS)
@@ -127,7 +128,7 @@ class dtree:
         for f in self.getFeatures(tree):
             sum += self.countNodes(tree[f])
         return sum
-        
+
 
     def classify(self,tree,datapoint):
         '''
@@ -143,7 +144,7 @@ class dtree:
             #print('following',datapoint[i])
             t = tree.get(datapoint[i],None) # follow this attr-value of datapoint
             if (t == None): # no match, return majority class
-                return tree[self.MAJORCLASS] 
+                return tree[self.MAJORCLASS]
             else:
                 return self.classify(t,datapoint)
 
@@ -177,7 +178,7 @@ class dtree:
         Returns class with most entropy and value of that entropy.
         :param newClasses: is set of all classes
         :param classes: is actual class
-        membership data, 
+        membership data,
         :param nData: is num of examples.
         '''
         index = 0
@@ -205,7 +206,7 @@ class dtree:
 
     def newNode(self,attrvalue,count):
         '''Create a new node with specified attribute value and count.'''
-        node = {} 
+        node = {}
         node[self.ATTR] = attrvalue
         node[self.LEAF] = False
         node[self.COUNT] = {}
@@ -291,7 +292,7 @@ class dtree:
             return tree
 
     def printTree(self,tree,str):
-        '''Print tree. 
+        '''Print tree.
         '''
         if self.isLeaf(tree):
             print (str, "\t->\t", tree[self.VALUE], tree[self.MAJORCLASS], tree[self.COUNT])
@@ -391,10 +392,10 @@ class dtree:
         examples under this node.
         '''
         tree[self.MAJORCLASS] = keymax(tree[self.COUNT])
-    
+
     def updateCounts(self,tree,datapoint,classpoint,majorityupdate):
         '''
-        Adds count of 
+        Adds count of
         class point to all nodes leading to its classification in a leaf.
         :param tree: a tree, stored as a dictionary (or string for leaves)
         :param datapoint: an ordered list of attribute values.
@@ -405,7 +406,7 @@ class dtree:
         tree[self.COUNT][classpoint] = tree[self.COUNT].get(classpoint,0) + 1
         if majorityupdate:
             self.updateMajorityClass(tree)
-            
+
         if self.isLeaf(tree):
             return
         else:
@@ -425,7 +426,7 @@ class dtree:
             self.updateCounts(tree,data[i],classes[i],majorityupdate)
 
 ## Add pruning code here.
-            
+
     def prune(self,tree,data,classes):
         '''Prunes tree in which nodes have counts for all classes over a
         validation set.  For each node consider number of errors
@@ -437,7 +438,15 @@ class dtree:
         :param classes: Assigned classes from the input data.
         '''
         # TODO
-        return
+        tree['@LEAF'] = "Yes"
+        tree['@VALUE'] = tree['@MAJOR']
+        for i in self.getFeatures(tree):
+            del(tree[i])
+        if ('@ATTR' in tree.keys()):
+            del(tree['@ATTR'])
+        return(tree)
+
+
 
     def countErrors(self):
         '''
@@ -446,4 +455,3 @@ class dtree:
         res = self.classifyAll(self.tree,self.data)
         ncorrect,numresults = self.score_tree(res,self.classes)
         return numresults - ncorrect
-
